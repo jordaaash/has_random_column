@@ -24,8 +24,8 @@ module HasRandomColumn
     when 3          then 8_388_607                 # mediumint
     when 2          then 32_767                    # smallint
     when 1          then 127                       # tinyint
-    else raise ArgumentError, "The maximum value for column #{column} " \
-                                "could not be determined."
+    else raise ArgumentError, "The maximum value for column #{column} could " \
+                              "not be determined."
     end
   end
 end
