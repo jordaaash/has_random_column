@@ -10,16 +10,16 @@ module HasRandomColumn
       :if     => nil,
       :unique => false
     }.merge!(options)
-    if options.delete(:unique)
+    if options.delete :unique
       new_block = Proc.new do
         unscoped = self.class.unscoped
         begin
-          value = instance_eval(&block)
+          value = instance_eval &block
         end while unscoped.exists?(column => value)
         self[column] = value
       end
     else
-      new_block = Proc.new { self[column] = instance_eval(&block) }
+      new_block = Proc.new { self[column] = instance_eval &block }
     end
     before_validation(options, &new_block)
   end

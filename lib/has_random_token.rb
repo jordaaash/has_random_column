@@ -9,11 +9,11 @@ module HasRandomColumn
       :bytes  => 16,
       :unique => true
     }.merge!(options)
-    column  = options.delete(:column)
-    bytes   = options.delete(:bytes)
+    column  = options.delete :column
+    bytes   = options.delete :bytes
     has_random_column(column, options) do
       random = SecureRandom.random_bytes(bytes)
-      instance_exec(random, &block)
+      instance_exec random, &block
     end
   end
 

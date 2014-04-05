@@ -17,24 +17,24 @@ module HasRandomColumn
       :cost      => 0
     }.merge!(options)
     column    = options[:column]
-    attribute = options.delete(:attribute)
-    cost      = options.delete(:cost)
-    hash      = options.delete(:hash)
-    if hash.is_a?(String)
+    attribute = options.delete :attribute
+    cost      = options.delete :cost
+    hash      = options.delete :hash
+    if hash.is_a? String
       hash = OpenSSL::Digest(hash)
     end
     new_block = Proc.new do |random|
-      token = instance_exec(random, &block)
-      instance_variable_set("@#{attribute}", token)
+      token = instance_exec random, &block
+      instance_variable_set :"@#{attribute}", token
       digest = self.class.digest_token(token, cost, hash)
-      instance_exec(digest, &block)
+      instance_exec digest, &block
     end
     attr_reader(attribute)
-    define_singleton_method(:"find_by_#{attribute}") do |token|
+    define_singleton_method :"find_by_#{attribute}" do |token|
       digest = digest_token(token, cost, hash)
       find_by column => instance_exec(digest, &block)
     end
-    define_singleton_method(:"find_by_#{attribute}!") do |token|
+    define_singleton_method :"find_by_#{attribute}!" do |token|
       digest = digest_token(token, cost, hash)
       find_by! column => instance_exec(digest, &block)
     end

@@ -6,7 +6,7 @@ module HasRandomColumn
     options = { :maximum => nil }.merge!(options)
     maximum = options.delete(:maximum) || maximum_integer_value(column)
     if block_given?
-      new_block = Proc.new { instance_exec(maximum, &block) }
+      new_block = Proc.new { instance_exec maximum, &block }
     else
       # + 1 since 0 <= SecureRandom.random_number(n) < n is < n
       new_block = Proc.new { SecureRandom.random_number(maximum + 1) }
