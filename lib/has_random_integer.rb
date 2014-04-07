@@ -8,7 +8,7 @@ module HasRandomColumn
     if block_given?
       new_block = Proc.new { instance_exec maximum, &block }
     else
-      # + 1 since 0 <= SecureRandom.random_number(n) < n is < n
+      # Since 0 <= SecureRandom.random_number(n) < n is < n, add 1
       new_block = Proc.new { SecureRandom.random_number(maximum + 1) }
     end
     has_random_column(column, options, &new_block)

@@ -4,7 +4,7 @@ require 'active_record/base'
 
 module HasRandomColumn
   def has_random_column (column, options = {}, &block)
-    raise ArgumentError, 'No block given' unless block_given?
+    raise ArgumentError, 'A block is required' unless block_given?
     options = {
       :on     => :create,
       :if     => nil,

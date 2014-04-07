@@ -10,7 +10,7 @@ module HasRandomColumn
     }.merge!(options)
     column  = options.delete(:column) || primary_key
     unless block_given?
-      # + 1 since 0 <= SecureRandom.random_number(n) < n may = 0
+      # Since 0 <= SecureRandom.random_number(n) < n may = 0, add 1
       block = Proc.new { |maximum| SecureRandom.random_number(maximum) + 1 }
     end
     has_random_integer(column, options, &block)

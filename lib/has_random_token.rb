@@ -11,6 +11,7 @@ module HasRandomColumn
     }.merge!(options)
     column  = options.delete :column
     bytes   = options.delete :bytes
+
     has_random_column(column, options) do
       random = SecureRandom.random_bytes(bytes)
       instance_exec random, &block
@@ -18,14 +19,14 @@ module HasRandomColumn
   end
 
   def has_random_hex_token (options = {})
-    has_random_token(options) { |random| random.unpack('H*')[0] }
+    has_random_token(options) { |token| token.unpack('H*')[0] }
   end
 
   def has_random_base64_token (options = {})
-    has_random_token(options) { |random| Base64.strict_encode64(random) }
+    has_random_token(options) { |token| Base64.strict_encode64(token) }
   end
 
   def has_random_urlsafe_base64_token (options = {})
-    has_random_token(options) { |random| Base64.urlsafe_encode64(random) }
+    has_random_token(options) { |token| Base64.urlsafe_encode64(token) }
   end
 end
