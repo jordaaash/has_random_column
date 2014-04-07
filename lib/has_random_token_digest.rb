@@ -20,41 +20,38 @@ module HasRandomColumn
     attribute = options.delete :attribute
     cost      = options.delete :cost
     hash      = options.delete :hash
-    if hash.is_a? String
-      hash = OpenSSL::Digest(hash)
+    hash      = OpenSSL::Digest(hash) if hash.is_a? String
+
+    attr_reader(attribute)
+
+    define_singleton_method :"find_by_#{attribute}" do |token|
+      digest = digest_token(token, cost, hash)
+      find_by column => instance_exec(digest, &block)
     end
-    new_block = Proc.new do |random|
+
+    define_singleton_method :"find_by_#{attribute}!" do |token|
+      digest = digest_token(token, cost, hash)
+      find_by! column => instance_exec(digest, &block)
+    end
+
+    has_random_token(options) do |random|
       token = instance_exec random, &block
       instance_variable_set :"@#{attribute}", token
       digest = self.class.digest_token(token, cost, hash)
       instance_exec digest, &block
     end
-    attr_reader(attribute)
-    define_singleton_method :"find_by_#{attribute}" do |token|
-      digest = digest_token(token, cost, hash)
-      find_by column => instance_exec(digest, &block)
-    end
-    define_singleton_method :"find_by_#{attribute}!" do |token|
-      digest = digest_token(token, cost, hash)
-      find_by! column => instance_exec(digest, &block)
-    end
-    has_random_token(options, &new_block)
   end
 
   def has_random_hex_token_digest (options = {})
-    has_random_token_digest(options) { |random| random.unpack('H*')[0] }
+    has_random_token_digest(options) { |token| token.unpack('H*')[0] }
   end
 
   def has_random_base64_token_digest (options = {})
-    has_random_token_digest(options) do |random|
-      Base64.strict_encode64(random)
-    end
+    has_random_token_digest(options) { |token| Base64.strict_encode64(token) }
   end
 
   def has_random_urlsafe_base64_token_digest (options = {})
-    has_random_token_digest(options) do |random|
-      Base64.urlsafe_encode64(random)
-    end
+    has_random_token_digest(options) { |token| Base64.urlsafe_encode64(token) }
   end
 
   def digest_token (token, cost, hash)
