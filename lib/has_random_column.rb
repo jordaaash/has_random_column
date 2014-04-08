@@ -1,7 +1,6 @@
 require 'has_random_column/version'
 require 'securerandom'
 require 'active_record/base'
-
 module HasRandomColumn
   def has_random_column (column, options = {}, &block)
     raise ArgumentError, 'A block is required' unless block_given?
@@ -10,18 +9,19 @@ module HasRandomColumn
       :if     => nil,
       :unique => false
     }.merge!(options)
-    if options.delete :unique
-      new_block = Proc.new do
+    unique  = options.delete :unique
+
+    before_validation(options) do
+      if unique
         unscoped = self.class.unscoped
         begin
           value = instance_eval &block
         end while unscoped.exists?(column => value)
-        self[column] = value
+      else
+        value = instance_eval &block
       end
-    else
-      new_block = Proc.new { self[column] = instance_eval &block }
+      self[column] = value
     end
-    before_validation(options, &new_block)
   end
 end
 
