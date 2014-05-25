@@ -1,6 +1,7 @@
 require 'has_random_column/version'
 require 'securerandom'
 require 'active_record/base'
+
 module HasRandomColumn
   def has_random_column (column, options = {}, &block)
     raise ArgumentError, 'A block is required' unless block_given?
