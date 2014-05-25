@@ -3,13 +3,13 @@ require 'securerandom'
 
 module HasRandomColumn
   def has_random_integer (column, options = {}, &block)
-    options = { :maximum => nil }.merge!(options)
+    options = { maximum: nil }.merge!(options)
     maximum = options.delete(:maximum) || maximum_integer_value(column)
     if block_given?
-      new_block = Proc.new { instance_exec maximum, &block }
+      new_block = proc { instance_exec(maximum, &block) }
     else
       # Since 0 <= SecureRandom.random_number(n) < n is < n, add 1
-      new_block = Proc.new { SecureRandom.random_number(maximum + 1) }
+      new_block = proc { SecureRandom.random_number(maximum + 1) }
     end
     has_random_column(column, options, &new_block)
   end
